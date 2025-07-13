@@ -242,6 +242,12 @@ function supabase_when_form_submit(): void {
 
     try {
         supabase_login($email, $password);
+
+        $wp_user = get_user_by('email', $email);
+
+        wp_set_current_user($wp_user->ID);
+        wp_set_auth_cookie($wp_user->ID, true);
+
         wp_redirect(home_url() . '?action=login');
     } catch (Error $error) {
         wp_redirect(wp_get_referer() . '?error=' . urlencode($error->getMessage()));
