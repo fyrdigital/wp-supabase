@@ -39,13 +39,13 @@ function supabase_login(string $email, string $password): Supabase_Auth_Session 
     ]);
 
     if (is_wp_error($response)) {
-        throw new Error('Login request failed: ' . $response->get_error_message());
+        throw new Error($response->get_error_message());
     }
 
     $body = json_decode(wp_remote_retrieve_body($response), true);
 
-    if (isset($body['error'])) {
-        throw new Error('Login failed: ' . $body['error']);
+    if (isset($body['error_code'])) {
+        throw new Error($body['msg']);
     }
 
     return new Supabase_Auth_Session(

@@ -55,3 +55,20 @@ export async function linkUser(email, supabase_id) {
         return { error, data: null };
     }
 }
+
+export async function hydrateSession() {
+    const access_token = supabaseClientOptions.accessToken;
+    const refresh_token = supabaseClientOptions.refreshToken;
+
+    if (access_token || refresh_token) {
+        return supabase.auth.setSession({
+            access_token,
+            refresh_token
+        });
+    } else {
+        return {
+            error: new Error('No session tokens found'),
+            data: null
+        }
+    }
+}

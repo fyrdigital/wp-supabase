@@ -42,8 +42,10 @@ require_once plugin_dir_path( __FILE__ ) . 'includes/html.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/user.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/util.php';
 
-function supabase_when_wp_head(): void {
-
+function supabase_when_init(): void {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 }
 
 function supabase_when_admin_init(): void {
@@ -129,6 +131,8 @@ function supabase_when_enqueue_scripts(): void {
     }, 10, 2);
 
     wp_localize_script('supabase-client', 'supabaseClientOptions', [
+        'accessToken' => $_SESSION['supabase']['access_token'] ?? '',
+        'refreshToken' => $_SESSION['supabase']['refresh_token'] ?? '',
         'projectUrl' => supabase_project_url(),
         'publicKey' => supabase_public_key(),
     ]);
@@ -241,14 +245,18 @@ function supabase_when_form_submit(): void {
     }
 
     try {
-        supabase_login($email, $password);
-
+        $supabase_session = supabase_login($email, $password);
         $wp_user = get_user_by('email', $email);
 
         wp_set_current_user($wp_user->ID);
         wp_set_auth_cookie($wp_user->ID, true);
 
-        wp_redirect(home_url() . '?action=login');
+        $_SESSION['supabase'] = [
+            'access_token' => $supabase_session->access_token,
+            'refresh_token' => $supabase_session->refresh_token,
+        ];
+
+        wp_redirect(home_url() . '?action=authenticate');
     } catch (Error $error) {
         wp_redirect(wp_get_referer() . '?error=' . urlencode($error->getMessage()));
     }
@@ -278,6 +286,7 @@ function supabase_reduce_manage_users_custom_column(string $output, string $colu
     }
 }
 
+add_action('init', 'supabase_when_init');
 add_action('admin_init', 'supabase_when_admin_init');
 add_action('admin_menu', 'supabase_when_admin_menu');
 add_action('admin_notices', 'supabase_when_admin_notices');
@@ -285,7 +294,6 @@ add_action('admin_head-users.php', 'supabase_when_admin_head_users');
 add_action('profile_update', 'supabase_when_profile_update');
 add_action('show_user_profile', 'supabase_when_show_user_profile');
 add_action('rest_api_init', 'supabase_when_rest_api_init');
-add_action('wp_head', 'supabase_when_wp_head');
 add_action('wp_enqueue_scripts', 'supabase_when_enqueue_scripts');
 add_action('admin_post_supabase_form_submit', 'supabase_when_form_submit');
 add_action('admin_post_nopriv_supabase_form_submit', 'supabase_when_form_submit');
