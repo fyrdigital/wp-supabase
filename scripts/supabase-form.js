@@ -20,13 +20,17 @@ export class SupabaseForm extends LitElement {
             --supabase-color-background: rgb(23 23 23 / 90%);
             --supabase-color-foreground: rgb(255 255 255 / 66%);
             --supabase-color-border: rgb(255 255 255 / 18%);
-            --supabase-color-highlight: rgb(255 255 255 / 15%);
+            --supabase-color-highlight: rgb(255 255 255 / 10%);
             --supabase-color-input: rgb(255 255 255 / 3.33%);
             
             --button-color: attr(button-color type(<color>), var(--supabase-color-brand));
             --button-text-color: attr(button-text-color type(<color>), white);
+            
+            --width: attr(width px, auto);
+            --provider-columns: attr(provider-columns type(<number>), 1);
 
             display: flex;
+            width: var(--width);
             min-width: 320px;
             padding: 32px;
             box-sizing: border-box;
@@ -75,19 +79,61 @@ export class SupabaseForm extends LitElement {
                 }
                 
                 section.providers {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
                     
-                    button {
-                        height: 38px;
-                        padding: 0;
-                        background: var(--supabase-color-highlight);
-                        border: 1px solid var(--supabase-color-border);
-                        border-radius: 0.375rem;
-                        font-size: 0.9rem;
-                        font-family: inherit;
+                    section.provider-buttons {
+                        display: grid;
+                        grid-template-columns: repeat(var(--provider-columns), 1fr);
+                        flex-direction: column;
+                        gap: 16px;
+
+                        button {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                            height: 38px;
+                            padding: 0;
+                            background: var(--supabase-color-highlight);
+                            border: 1px solid var(--supabase-color-border);
+                            border-radius: 0.375rem;
+                            font-size: 0.9rem;
+                            font-family: inherit;
+                            color: var(--supabase-color-foreground);
+                            
+                            svg {
+                                opacity: 0.66;
+                            }
+                            
+                            span {
+                                color: white;
+                            }
+                        }
+                    }
+                    
+                    div.provider-divider {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         color: var(--supabase-color-foreground);
+                        font-size: 0.75rem;
+                        position: relative;
+                        margin-top: 32px;
+                        text-transform: lowercase;
+
+                        &::before, &::after {
+                            content: '';
+                            flex-grow: 1;
+                            height: 1px;
+                            background-color: var(--supabase-color-border);
+                        }
+
+                        &::before {
+                            margin-right: 8px;
+                        }
+
+                        &::after {
+                            margin-left: 8px;
+                        }
                     }
                 }
 
@@ -188,8 +234,30 @@ export class SupabaseForm extends LitElement {
                     </slot>
                 </header>
                 <section class="providers">
-                    <button type="button" name="facebook" @click="${this.handleProviderClick}">Facebook</button>
-                    <button type="button" name="google" @click="${this.handleProviderClick}">Google</button>
+                    <section class="provider-buttons">
+                        <button type="button" name="facebook" @click="${this.handleProviderClick}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" role="img">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            <span>
+                                Facebook
+                            </span>
+                        </button>
+                        <button type="button" name="google" @click="${this.handleProviderClick}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="-3 0 262 262" version="1.1" preserveAspectRatio="xMidYMid">
+                                <g>
+                                    <path d="M255.878,133.451 C255.878,122.717 255.007,114.884 253.122,106.761 L130.55,106.761 L130.55,155.209 L202.497,155.209 C201.047,167.249 193.214,185.381 175.807,197.565 L175.563,199.187 L214.318,229.21 L217.003,229.478 C241.662,206.704 255.878,173.196 255.878,133.451"></path>
+                                    <path d="M130.55,261.1 C165.798,261.1 195.389,249.495 217.003,229.478 L175.807,197.565 C164.783,205.253 149.987,210.62 130.55,210.62 C96.027,210.62 66.726,187.847 56.281,156.37 L54.75,156.5 L14.452,187.687 L13.925,189.152 C35.393,231.798 79.49,261.1 130.55,261.1"></path>
+                                    <path d="M56.281,156.37 C53.525,148.247 51.93,139.543 51.93,130.55 C51.93,121.556 53.525,112.853 56.136,104.73 L56.063,103 L15.26,71.312 L13.925,71.947 C5.077,89.644 0,109.517 0,130.55 C0,151.583 5.077,171.455 13.925,189.152 L56.281,156.37"></path>
+                                    <path d="M130.55,50.479 C155.064,50.479 171.6,61.068 181.029,69.917 L217.873,33.943 C195.245,12.91 165.798,0 130.55,0 C79.49,0 35.393,29.301 13.925,71.947 L56.136,104.73 C66.726,73.253 96.027,50.479 130.55,50.479"></path>
+                                </g>
+                            </svg>
+                            <span>
+                                Google
+                            </span>
+                        </button>
+                    </section>
+                    <div class="provider-divider">Or</div>
                 </section>
                 <section class="fields">
                     <section class="email-field field">
