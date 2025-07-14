@@ -27,12 +27,13 @@ export class SupabaseForm extends LitElement {
             --button-text-color: attr(button-text-color type(<color>), white);
             
             --width: attr(width px, auto);
+            --padding: attr(padding px, 32px);
             --provider-columns: attr(provider-columns type(<number>), 1);
 
             display: flex;
             width: var(--width);
             min-width: 320px;
-            padding: 32px;
+            padding: var(--padding);
             box-sizing: border-box;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: white;
@@ -65,7 +66,7 @@ export class SupabaseForm extends LitElement {
 
                         h1 {
                             margin: 0;
-                            color: var(--supabase-color-border);
+                            color: white;
                             font-size: 2.33rem;
                             font-weight: lighter;
                         }
@@ -236,6 +237,20 @@ export class SupabaseForm extends LitElement {
                 <section class="providers">
                     <section class="provider-buttons">
                         <button type="button" name="facebook" @click="${this.handleProviderClick}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="-1.5 0 20 20" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g transform="translate(-102.000000, -7439.000000)" fill="currentColor">
+                                        <g transform="translate(56.000000, 160.000000)">
+                                            <path d="M57.5708873,7282.19296 C58.2999598,7281.34797 58.7914012,7280.17098 58.6569121,7279 C57.6062792,7279.04 56.3352055,7279.67099 55.5818643,7280.51498 C54.905374,7281.26397 54.3148354,7282.46095 54.4735932,7283.60894 C55.6455696,7283.69593 56.8418148,7283.03894 57.5708873,7282.19296 M60.1989864,7289.62485 C60.2283111,7292.65181 62.9696641,7293.65879 63,7293.67179 C62.9777537,7293.74279 62.562152,7295.10677 61.5560117,7296.51675 C60.6853718,7297.73474 59.7823735,7298.94772 58.3596204,7298.97372 C56.9621472,7298.99872 56.5121648,7298.17973 54.9134635,7298.17973 C53.3157735,7298.17973 52.8162425,7298.94772 51.4935978,7298.99872 C50.1203933,7299.04772 49.0738052,7297.68074 48.197098,7296.46676 C46.4032359,7293.98379 45.0330649,7289.44985 46.8734421,7286.3899 C47.7875635,7284.87092 49.4206455,7283.90793 51.1942837,7283.88393 C52.5422083,7283.85893 53.8153044,7284.75292 54.6394294,7284.75292 C55.4635543,7284.75292 57.0106846,7283.67793 58.6366882,7283.83593 C59.3172232,7283.86293 61.2283842,7284.09893 62.4549652,7285.8199 C62.355868,7285.8789 60.1747177,7287.09489 60.1989864,7289.62485" id="apple-[#173]"></path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                            <span>
+                                Apple
+                            </span>
+                        </button>
+                        <button type="button" name="facebook" @click="${this.handleProviderClick}">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="20" height="20" viewBox="0 0 24 24" role="img">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
@@ -254,6 +269,36 @@ export class SupabaseForm extends LitElement {
                             </svg>
                             <span>
                                 Google
+                            </span>
+                        </button>
+                        <button type="button" name="azure" @click="${this.handleProviderClick}">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20" version="1.1">
+                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g id="Dribbble-Light-Preview" transform="translate(-220.000000, -7519.000000)" fill="currentColor">
+                                        <g id="icons" transform="translate(56.000000, 160.000000)">
+                                            <path d="M174,7379 L184,7379 L184,7370 L174,7370 L174,7379 Z M164,7379 L173,7379 L173,7370 L164,7370 L164,7379 Z M174,7369 L184,7369 L184,7359 L174,7359 L174,7369 Z M164,7369 L173,7369 L173,7359 L164,7359 L164,7369 Z" id="microsoft-[#150]"></path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                            <span>
+                                Microsoft
+                            </span>
+                        </button>
+                        <button type="button" name="linkedin" @click="${this.handleProviderClick}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" version="1.1" width="20" height="20" viewBox="0 0 512 512" xml:space="preserve">
+                                <path style="display: inline; fill-rule: evenodd; clip-rule: evenodd;" d="M116.504,500.219V170.654H6.975v329.564H116.504   L116.504,500.219z M61.751,125.674c38.183,0,61.968-25.328,61.968-56.953c-0.722-32.328-23.785-56.941-61.252-56.941   C24.994,11.781,0.5,36.394,0.5,68.722c0,31.625,23.772,56.953,60.53,56.953H61.751L61.751,125.674z M177.124,500.219   c0,0,1.437-298.643,0-329.564H286.67v47.794h-0.727c14.404-22.49,40.354-55.533,99.44-55.533   c72.085,0,126.116,47.103,126.116,148.333v188.971H401.971V323.912c0-44.301-15.848-74.531-55.497-74.531   c-30.254,0-48.284,20.38-56.202,40.08c-2.897,7.012-3.602,16.861-3.602,26.711v184.047H177.124L177.124,500.219z"></path>
+                            </svg>
+                            <span>
+                                LinkedIn
+                            </span>
+                        </button>
+                        <button type="button" name="linkedin" @click="${this.handleProviderClick}">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 30 30" fill="currentColor">
+                                <path d="M26.37,26l-8.795-12.822l0.015,0.012L25.52,4h-2.65l-6.46,7.48L11.28,4H4.33l8.211,11.971L12.54,15.97L3.88,26h2.65 l7.182-8.322L19.42,26H26.37z M10.23,6l12.34,18h-2.1L8.12,6H10.23z"></path>
+                            </svg>
+                            <span>
+                                Twitter
                             </span>
                         </button>
                     </section>
