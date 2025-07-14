@@ -307,9 +307,16 @@ export class SupabaseForm extends LitElement {
             if (signInResponse.error) {
                 // TODO message error to user
             } else if (signInResponse.data.user) {
-                const userEmail = signInResponse.data.user.email;
-                const userId = signInResponse.data.user.id;
-                const linkUserResponse = await supabase.wordpress.syncUser(userEmail, userId);
+                const user = signInResponse.data.user;
+                const providers = user.identities.map(identity => identity.provider);
+                const metadata = {
+                    first_name: user.user_metadata.first_name,
+                    last_name: user.user_metadata.last_name,
+                    name: user.user_metadata.name,
+                    phone: user.user_metadata.phone ?? user.phone
+                };
+
+                const linkUserResponse = await supabase.wordpress.syncUser(user.email, user.id, providers, metadata);
 
                 if (linkUserResponse.error) {
                     // TODO what should we do if the user is not linked?

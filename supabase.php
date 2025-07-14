@@ -158,6 +158,10 @@ function supabase_when_rest_api_init(): void {
             $email = sanitize_email($request->get_param('email'));
             $supabase_id = sanitize_text_field($request->get_param(SUPABASE_ID));
             $providers = $request->get_param('providers') ?: [];
+            $first_name = sanitize_text_field($request->get_param('first_name') ?? '');
+            $last_name = sanitize_text_field($request->get_param('last_name') ?? '');
+            $name = sanitize_text_field($request->get_param('name') ?? '');
+            $phone = sanitize_text_field($request->get_param('phone') ?? '');
 
             if (!$email || !$supabase_id) {
                 return new WP_REST_Response(['error' => 'Missing required fields.'], 400);
@@ -179,6 +183,22 @@ function supabase_when_rest_api_init(): void {
 
             update_user_meta($user->ID, SUPABASE_ID, $supabase_id);
             update_user_meta($user->ID, SUPABASE_PROVIDERS, $providers);
+
+            if ($first_name) {
+                update_user_meta($user->ID, 'first_name', $first_name);
+            }
+
+            if ($last_name) {
+                update_user_meta($user->ID, 'last_name', $last_name);
+            }
+
+            if ($name) {
+                update_user_meta($user->ID, 'display_name', $name);
+            }
+
+            if ($phone) {
+                update_user_meta($user->ID, 'phone', $phone);
+            }
 
             wp_set_current_user($user->ID);
             wp_set_auth_cookie($user->ID, true);

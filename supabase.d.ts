@@ -11,7 +11,7 @@ interface SupabaseWordPressResponse<Data = unknown> {
 
 interface SupabaseWordPressService {
     hydrateSession(): Promise<SupabaseWordPressResponse>;
-    syncUser(email: string, supabaseId: string, providers?: string[]): Promise<SupabaseWordPressResponse<SupabaseWordPressUserReference>>;
+    syncUser(email: string, supabaseId: string, providers?: string[], metadata?: Record<string, string>): Promise<SupabaseWordPressResponse<SupabaseWordPressUserReference>>;
 }
 
 export interface WithWordPressService {

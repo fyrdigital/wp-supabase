@@ -14,11 +14,15 @@ supabase.auth.onAuthStateChange((event, session) => {
     const login = query.get('login');
 
     if (event === 'SIGNED_IN' && login === 'pending') {
-        supabase.wordpress.syncUser(
-            session.user.email,
-            session.user.id,
-            session.user.identities.map(identity => identity.provider)
-        ).then((response) => {
+        const providers = session.user.identities.map(identity => identity.provider);
+        const metadata = {
+            first_name: session.user.user_metadata.first_name,
+            last_name: session.user.user_metadata.last_name,
+            name: session.user.user_metadata.name,
+            phone: session.user.user_metadata.phone ?? session.user.phone
+        };
+
+        supabase.wordpress.syncUser(session.user.email, session.user.id, providers, metadata).then((response) => {
             if (response.error) {
                 // TODO handle error...
             } else if (response.data) {

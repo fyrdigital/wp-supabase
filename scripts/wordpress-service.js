@@ -1,4 +1,4 @@
-export async function syncUser(email, supabase_id, providers = []) {
+export async function syncUser(email, supabase_id, providers = [], metadata = {}) {
     try {
         const response = await fetch('/wp-json/supabase/v2/users/sync', {
             method: 'POST',
@@ -6,6 +6,7 @@ export async function syncUser(email, supabase_id, providers = []) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                ...metadata,
                 email,
                 supabase_id,
                 providers
