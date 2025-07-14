@@ -193,7 +193,7 @@ function supabase_when_rest_api_init(): void {
             }
 
             if ($name) {
-                update_user_meta($user->ID, 'display_name', $name);
+                update_user_meta($user->ID, 'nickname', $name);
             }
 
             if ($phone) {

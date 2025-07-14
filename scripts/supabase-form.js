@@ -66,7 +66,7 @@ export class SupabaseForm extends LitElement {
                         h1 {
                             margin: 0;
                             color: var(--supabase-color-border);
-                            font-size: 2rem;
+                            font-size: 2.33rem;
                             font-weight: lighter;
                         }
 
