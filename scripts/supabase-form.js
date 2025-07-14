@@ -5,11 +5,13 @@ export class SupabaseForm extends LitElement {
     async = false;
     action = '/wp-admin/admin-post.php';
     withStyles = false;
+    injectStyle = '';
 
     static properties = {
         async: { attribute: 'async', type: Boolean },
         action: { attribute: 'action', type: String },
-        withStyles: { attribute: 'with-styles', type: Boolean }
+        withStyles: { attribute: 'with-styles', type: Boolean },
+        injectStyle: { attribute: 'inject-style', type: String }
     };
 
     static styles = css`
@@ -71,6 +73,23 @@ export class SupabaseForm extends LitElement {
                         }
                     }
                 }
+                
+                section.providers {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    
+                    button {
+                        height: 38px;
+                        padding: 0;
+                        background: var(--supabase-color-highlight);
+                        border: 1px solid var(--supabase-color-border);
+                        border-radius: 0.375rem;
+                        font-size: 0.9rem;
+                        font-family: inherit;
+                        color: var(--supabase-color-foreground);
+                    }
+                }
 
                 section.fields {
                     display: flex;
@@ -130,11 +149,11 @@ export class SupabaseForm extends LitElement {
 
     render() {
         return html`
+            <style>${this.injectStyle}</style>
             <form method="post" action="${this.action}" @submit="${this.handleSubmit}">
                 <input type="hidden" name="action" value="supabase_form_submit">
                 <header>
-                    <slot name="logo"></slot>
-                    <slot name="header">
+                    <slot name="logo">
                         ${this.withStyles ? html`
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 581 113" fill="none">
                                 <path d="M151.397 66.761C151.996 72.3623 157.091 81.9644 171.877 81.9644C184.764 81.9644 190.959 73.7627 190.959 65.7609C190.959 58.5592 186.063 52.658 176.373 50.6574L169.379 49.1571C166.682 48.657 164.884 47.1568 164.884 44.7561C164.884 41.9555 167.681 39.8552 171.178 39.8552C176.772 39.8552 178.87 43.5558 179.27 46.4566L190.359 43.9561C189.76 38.6549 185.064 29.7529 171.078 29.7529C160.488 29.7529 152.696 37.0545 152.696 45.8563C152.696 52.7579 156.991 58.4593 166.482 60.5596L172.976 62.0601C176.772 62.8601 178.271 64.6607 178.271 66.8611C178.271 69.4618 176.173 71.7623 171.777 71.7623C165.983 71.7623 163.085 68.1613 162.786 64.2605L151.397 66.761Z" fill="white"/>
@@ -160,12 +179,18 @@ export class SupabaseForm extends LitElement {
                                 </defs>
                             </svg>
                         ` : ''}
+                    </slot>
+                    <slot name="header">
                         <div>
                             <h1>Welcome back</h1>
                             <p>Sign in to your account</p>
                         </div>
                     </slot>
                 </header>
+                <section class="providers">
+                    <button type="button" name="facebook" @click="${this.handleProviderClick}">Facebook</button>
+                    <button type="button" name="google" @click="${this.handleProviderClick}">Google</button>
+                </section>
                 <section class="fields">
                     <section class="email-field field">
                         <slot name="email-field">
@@ -195,24 +220,28 @@ export class SupabaseForm extends LitElement {
     handleSubmit(event) {
         if (this.async) {
             event.preventDefault();
-            this.#submitAsync();
+            this.#submitAsync('password');
         }
     }
 
-    async #submitAsync() {
+    handleProviderClick(event) {
+        this.#submitAsync(event.currentTarget.name);
+    }
+
+    async #submitAsync(provider) {
         const form = this.shadowRoot.querySelector('form');
         const email = form.email.value;
         const password = form.password.value;
 
-        try {
-            const signInResponse = await supabase.auth.signInWithPassword({ email, password });
+        if (provider === 'email') try {
+            const signInResponse = await supabase.auth.signInWithPassword({ email, password })
 
             if (signInResponse.error) {
                 // TODO message error to user
             } else if (signInResponse.data.user) {
                 const userEmail = signInResponse.data.user.email;
                 const userId = signInResponse.data.user.id;
-                const linkUserResponse = await supabase.wordpress.linkUser(userEmail, userId);
+                const linkUserResponse = await supabase.wordpress.syncUser(userEmail, userId);
 
                 if (linkUserResponse.error) {
                     // TODO what should we do if the user is not linked?
@@ -238,6 +267,13 @@ export class SupabaseForm extends LitElement {
             }
         } catch (error) {
             console.error(error);
+        } else {
+            void supabase.auth.signInWithOAuth({
+                provider,
+                options: {
+                    redirectTo: `${window.location.href}?login=pending`
+                }
+            });
         }
     }
 }

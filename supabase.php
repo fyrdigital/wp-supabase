@@ -16,6 +16,7 @@
 const SUPABASE = 'supabase';
 const SUPABASE_ID = 'supabase_id';
 const SUPABASE_USER = 'supabase_user';
+const SUPABASE_PROVIDERS = 'supabase_providers';
 const SUPABASE_PROJECT_URL = 'supabase_project_url';
 const SUPABASE_PUBLIC_KEY = 'supabase_anon_public_key';
 const SUPABASE_SERVICE_KEY = 'supabase_service_key';
@@ -35,6 +36,18 @@ function supabase_public_key(): string {
 
 function supabase_service_key(): string {
     return get_option(SUPABASE_SERVICE_KEY);
+}
+
+function supabase_is_pending(): bool {
+    return isset($_GET['login']) && $_GET['login'] === 'pending';
+}
+
+function supabase_is_error(): bool {
+    return isset($_GET['login']) && $_GET['login'] === 'error';
+}
+
+function supabase_is_success(): bool {
+    return isset($_GET['login']) && $_GET['login'] === 'success';
 }
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/auth.php';
@@ -139,11 +152,12 @@ function supabase_when_enqueue_scripts(): void {
 }
 
 function supabase_when_rest_api_init(): void {
-    register_rest_route('supabase/v2', '/sync', [
+    register_rest_route('supabase/v2', '/users/sync', [
         'methods'  => 'POST',
         'callback' => function(WP_REST_Request $request) {
             $email = sanitize_email($request->get_param('email'));
             $supabase_id = sanitize_text_field($request->get_param(SUPABASE_ID));
+            $providers = $request->get_param('providers') ?: [];
 
             if (!$email || !$supabase_id) {
                 return new WP_REST_Response(['error' => 'Missing required fields.'], 400);
@@ -164,6 +178,7 @@ function supabase_when_rest_api_init(): void {
             }
 
             update_user_meta($user->ID, SUPABASE_ID, $supabase_id);
+            update_user_meta($user->ID, SUPABASE_PROVIDERS, $providers);
 
             wp_set_current_user($user->ID);
             wp_set_auth_cookie($user->ID, true);
