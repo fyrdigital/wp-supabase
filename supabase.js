@@ -4,6 +4,7 @@ import * as wordpress from './scripts/wordpress-service.js';
 
 window.supabase = createSupabaseClient({ wordpress });
 window.customElements.define('supabase-form', SupabaseForm);
+
 wordpress.hydrateSession().then(() => {
     window.dispatchEvent(new Event('supabase-ready'));
 });
